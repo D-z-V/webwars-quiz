@@ -37,4 +37,4 @@ To run the Quiz Game, simply open the index.html file in your web browser.
 Credits
 -------
 
-The Quiz Game was created by [Your Name].
+The Quiz Game was created by ![Dev](https://github.com/D-z-V).
