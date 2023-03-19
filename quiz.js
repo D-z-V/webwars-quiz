@@ -114,6 +114,7 @@ function startQuiz() {
     displayQuestion();
     startTimer();
     quizContainer.removeChild(loader);
+    quizContainer.style.display = 'block';
     submitButton.style.display = "block";
   });
 }
@@ -238,8 +239,10 @@ function handleNextQuestion() {
 }
 
 function handleRetry() {
+quizContainer.style.display = 'none';
   resetQuiz();
   startQuiz();
+
 }
 
 submitButton.addEventListener("click", handleNextQuestion);
