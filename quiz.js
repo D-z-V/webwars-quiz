@@ -9,8 +9,9 @@ const timeRemaining = document.getElementById("time-remaining");
 const startButton = document.getElementById("start-btn");
 const quizContainerDiv = document.querySelector(".quiz-container");
 const finalContainerDiv = document.querySelector(".final-container");
-const progress = document.querySelector('.progress');
-const questionNumber = document.querySelector('.question-no');
+const progress = document.querySelector(".progress");
+const questionNumber = document.querySelector(".question-no");
+const rulesContainer = document.querySelector(".rules-container");
 
 let currentQuestion = 0;
 let score = 0;
@@ -49,76 +50,73 @@ async function fetchQuizData() {
 }
 
 function displayQuestion() {
-    const questionElement = document.getElementById("question");
-    const optionsElement = document.getElementById("options");
-  
-    const question = quizQuestions[currentQuestion];
-  
-    questionElement.textContent = question.question;
-  
-    const optionsList = document.createElement("ul");
-    optionsElement.innerHTML = "";
-    for (let i = 0; i < question.choices.length; i++) {
-      const li = document.createElement("li");
-      const label = document.createElement("label");
-      const choice = question.choices[i];
-      const input = document.createElement("input");
-  
-      input.type = "radio";
-      input.name = "quiz";
-      input.value = choice;
-      label.textContent = choice;
-  
-      li.appendChild(input);
-      li.appendChild(label);
-      optionsList.appendChild(li);
-    }
-    optionsElement.appendChild(optionsList);
-  
-    scoreValue.textContent = score; // add this line
-  }
-  
+  const questionElement = document.getElementById("question");
+  const optionsElement = document.getElementById("options");
 
-  
+  const question = quizQuestions[currentQuestion];
+
+  questionElement.textContent = question.question;
+
+  const optionsList = document.createElement("ul");
+  optionsElement.innerHTML = "";
+  for (let i = 0; i < question.choices.length; i++) {
+    const li = document.createElement("li");
+    const label = document.createElement("label");
+    const choice = question.choices[i];
+    const input = document.createElement("input");
+
+    input.type = "radio";
+    input.name = "quiz";
+    input.value = choice;
+    label.textContent = choice;
+
+    li.appendChild(input);
+    li.appendChild(label);
+    optionsList.appendChild(li);
+  }
+  optionsElement.appendChild(optionsList);
+
+  scoreValue.textContent = score; // add this line
+}
 
 function resetQuiz() {
-    progress.style.width = "0%";
+  progress.style.width = "0%";
   currentQuestion = 0;
   score = 0;
   timeLeft = 15 + 2;
   clearInterval(timerInterval);
   startButton.disabled = false;
-  startButton.style.display = 'block';
+  startButton.style.display = "block";
   feedback.classList.add("hide");
   quizContainerDiv.classList.add("hide");
   //finalContainerDiv.classList.add("hide");
 }
 
 function startQuiz() {
-    resetQuiz();
-    startButton.disabled = true;
-    startButton.style.display = "none";
-    quizContainerDiv.classList.remove("hide");
-    finalContainerDiv.style.display = "block";
-    score = 0;
-    scoreValue.textContent = score;
-    
-    const loader = document.createElement("img");
-    loader.src = "./assets/loader.gif";
-    loader.alt = "Loading...";
-    loader.style.display = "block";
-    loader.style.margin = "auto";
-    quizContainer.appendChild(loader);
-    submitButton.style.display = "none";
-  
-    fetchQuizData().then(() => {
-      displayQuestion();
-      startTimer();
-      quizContainer.removeChild(loader);
-        submitButton.style.display = "block";   
-    });
-  }
-  
+  resetQuiz();
+  rulesContainer.classList.add("hide");
+  startButton.disabled = true;
+  startButton.style.display = "none";
+  quizContainerDiv.classList.remove("hide");
+  finalContainerDiv.style.display = "block";
+  score = 0;
+  scoreValue.textContent = score;
+
+  const loader = document.createElement("img");
+  loader.src = "./assets/loader.gif";
+  loader.alt = "Loading...";
+  loader.style.display = "block";
+  loader.style.margin = "auto";
+  quizContainer.appendChild(loader);
+  submitButton.style.display = "none";
+
+  fetchQuizData().then(() => {
+    displayQuestion();
+    startTimer();
+    quizContainer.removeChild(loader);
+    submitButton.style.display = "block";
+  });
+}
 
 function startTimer() {
   timer.classList.remove("hide");
@@ -134,18 +132,17 @@ function startTimer() {
 }
 
 function updateRadio(questionNo) {
-    
-    const precentage = (questionNo / quizQuestions.length) * 100;
-    if (precentage < 30) {
-        progress.style.backgroundColor = "red";
-    }
-    if (precentage < 70 && precentage > 30) {
-        progress.style.backgroundColor = "orange";
-    }
-    if (precentage > 70) {
-        progress.style.backgroundColor = "green";
-    }
-    progress.style.width = `${precentage}%`;
+  const precentage = (questionNo / quizQuestions.length) * 100;
+  if (precentage < 30) {
+    progress.style.backgroundColor = "red";
+  }
+  if (precentage < 70 && precentage > 30) {
+    progress.style.backgroundColor = "orange";
+  }
+  if (precentage > 70) {
+    progress.style.backgroundColor = "green";
+  }
+  progress.style.width = `${precentage}%`;
 }
 
 function submitQuiz() {
@@ -156,92 +153,89 @@ function submitQuiz() {
 }
 
 function handleNextQuestion() {
-    //questionNumber.innerHTML = (currentQuestion + 1) + " / 15";
-    const selected = document.querySelector('input[name="quiz"]:checked');
-    updateRadio(currentQuestion + 1);
-    if (!selected) {
+  //questionNumber.innerHTML = (currentQuestion + 1) + " / 15";
+  const selected = document.querySelector('input[name="quiz"]:checked');
+  updateRadio(currentQuestion + 1);
+  if (!selected) {
     feedback.textContent = "Please select an answer.";
     feedback.classList.remove("hide");
     return;
-    }
+  }
 
-    const question = quizQuestions[currentQuestion];
-    const answer = question.answer;
-    const selectedAnswer = selected.value;
+  const question = quizQuestions[currentQuestion];
+  const answer = question.answer;
+  const selectedAnswer = selected.value;
 
-    if (selectedAnswer === answer) {
-        score++;
-        feedback.classList.remove("hide", "incorrect");
-        feedback.classList.add("correct");
-        
-        const container = document.createElement("div");
-        container.style.display = "flex";
-        container.style.flexDirection = "column";
-        container.style.alignItems = "center";
-        
-        const img = document.createElement("img");
-        img.src = "./assets/tick.gif";
-        img.style.width = "300px";
-        container.appendChild(img);
-        
-        const text = document.createElement("p");
-        text.textContent = "Correct!";
-        container.appendChild(text);
-        
-        feedback.appendChild(container);
-      } else {
-        feedback.classList.remove("hide", "correct");
-        feedback.classList.add("incorrect");
-      
-        const container = document.createElement("div");
-        container.style.display = "flex";
-        container.style.flexDirection = "column";
-        container.style.alignItems = "center";
-        
-        const img = document.createElement("img");
-        img.src = "./assets/cross.gif";
-        img.style.width = "300px";
-        container.appendChild(img);
-        
-        const text = document.createElement("p");
-        text.textContent = `Incorrect. The correct answer is: ${answer}`;
-        container.appendChild(text);
-        
-        feedback.appendChild(container);
-      }
-      
-      quizContainer.style.display = "none";
-      submitButton.style.display = 'none';
-      timer.style.display = 'none';
-      
-      setTimeout(() => {
-        feedback.innerHTML = "";
-        submitButton.style.display = 'block';
-        quizContainer.style.display = "block";
-        timer.style.display = 'block';
-        feedback.classList.add("hide");
-      }, 2000);
-      
-      
+  if (selectedAnswer === answer) {
+    score++;
+    feedback.classList.remove("hide", "incorrect");
+    feedback.classList.add("correct");
 
-    currentQuestion++;
+    const container = document.createElement("div");
+    container.style.display = "flex";
+    container.style.flexDirection = "column";
+    container.style.alignItems = "center";
 
-    clearInterval(timerInterval);
-    timeLeft =  15 + 2;
-    timeRemaining.textContent = timeLeft;
-    startTimer();
+    const img = document.createElement("img");
+    img.src = "./assets/tick.gif";
+    img.style.width = "300px";
+    container.appendChild(img);
 
-    scoreValue.textContent = score;
+    const text = document.createElement("p");
+    text.textContent = "Correct!";
+    container.appendChild(text);
 
-    if (currentQuestion < quizQuestions.length) {
+    feedback.appendChild(container);
+  } else {
+    feedback.classList.remove("hide", "correct");
+    feedback.classList.add("incorrect");
+
+    const container = document.createElement("div");
+    container.style.display = "flex";
+    container.style.flexDirection = "column";
+    container.style.alignItems = "center";
+
+    const img = document.createElement("img");
+    img.src = "./assets/cross.gif";
+    img.style.width = "300px";
+    container.appendChild(img);
+
+    const text = document.createElement("p");
+    text.textContent = `Incorrect. The correct answer is: ${answer}`;
+    container.appendChild(text);
+
+    feedback.appendChild(container);
+  }
+
+  quizContainer.style.display = "none";
+  submitButton.style.display = "none";
+  timer.style.display = "none";
+
+  setTimeout(() => {
+    feedback.innerHTML = "";
+    submitButton.style.display = "block";
+    quizContainer.style.display = "block";
+    timer.style.display = "block";
+    feedback.classList.add("hide");
+  }, 2000);
+
+  currentQuestion++;
+
+  clearInterval(timerInterval);
+  timeLeft = 15 + 2;
+  timeRemaining.textContent = timeLeft;
+  startTimer();
+
+  scoreValue.textContent = score;
+
+  if (currentQuestion < quizQuestions.length) {
     displayQuestion();
-    } else {
+  } else {
     submitQuiz();
-    }
+  }
 
-    finalScore.innerHTML = score;
+  finalScore.innerHTML = score;
 }
-
 
 function handleRetry() {
   resetQuiz();
