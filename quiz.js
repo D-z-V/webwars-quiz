@@ -97,17 +97,28 @@ function resetQuiz() {
 function startQuiz() {
     resetQuiz();
     startButton.disabled = true;
-    timeLeft = 15;
-    startButton.style.display = 'none';
+    startButton.style.display = "none";
     quizContainerDiv.classList.remove("hide");
-    finalContainerDiv.style.display = 'block';
+    finalContainerDiv.style.display = "block";
     score = 0;
-    scoreValue.textContent = score; // add this line
+    scoreValue.textContent = score;
+    
+    const loader = document.createElement("img");
+    loader.src = "./assets/loader.gif";
+    loader.alt = "Loading...";
+    loader.style.display = "block";
+    loader.style.margin = "auto";
+    quizContainer.appendChild(loader);
+    submitButton.style.display = "none";
+  
     fetchQuizData().then(() => {
       displayQuestion();
       startTimer();
+      quizContainer.removeChild(loader);
+        submitButton.style.display = "block";   
     });
   }
+  
 
 function startTimer() {
   timer.classList.remove("hide");
